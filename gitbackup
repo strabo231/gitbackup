@@ -215,9 +215,19 @@ list_repos() {
         
         # Check for uncommitted changes
         local status=""
-        if ! git diff-index --quiet HEAD -- 2>/dev/null; then
-            status="${RED}[UNCOMMITTED CHANGES]${NC}"
-        elif [ -n "$(git status --porcelain 2>/dev/null)" ]; then
+        if git rev-parse HEAD >/dev/null 2>&1; then
+            # Repo has commits
+            if ! git diff-index --quiet HEAD -- 2>/dev/null; then
+                status="${RED}[UNCOMMITTED CHANGES]${NC}"
+            elif [ -n "$(git status --porcelain 2>/dev/null)" ]; then
+                status="${YELLOW}[UNTRACKED FILES]${NC}"
+            else
+                status="${GREEN}[CLEAN]${NC}"
+            fi
+        else
+            # New repo with no commits yet
+            status="${YELLOW}[NEW REPO]${NC}"
+        fi
             status="${YELLOW}[UNTRACKED FILES]${NC}"
         else
             status="${GREEN}[CLEAN]${NC}"
@@ -246,6 +256,12 @@ get_repo_status() {
     local repo="$1"
     
     cd "$repo"
+    
+    # Check if repo has any commits
+    if ! git rev-parse HEAD >/dev/null 2>&1; then
+        echo "NEW"
+        return
+    fi
     
     # Check if there are uncommitted changes
     if ! git diff-index --quiet HEAD -- 2>/dev/null; then
