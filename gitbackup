@@ -228,10 +228,6 @@ list_repos() {
             # New repo with no commits yet
             status="${YELLOW}[NEW REPO]${NC}"
         fi
-            status="${YELLOW}[UNTRACKED FILES]${NC}"
-        else
-            status="${GREEN}[CLEAN]${NC}"
-        fi
         
         # Get last commit date
         local last_commit=$(git log -1 --format="%ar" 2>/dev/null || echo "unknown")
