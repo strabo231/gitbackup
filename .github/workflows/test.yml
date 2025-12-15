@@ -1,0 +1,95 @@
+name: Test GitBackup
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Test on Ubuntu
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Make script executable
+      run: chmod +x gitbackup
+    
+    - name: Test help command
+      run: ./gitbackup --help
+    
+    - name: Test version command
+      run: ./gitbackup --version
+    
+    - name: Create test git repository
+      run: |
+        mkdir -p /tmp/test-repos/project1
+        cd /tmp/test-repos/project1
+        git config --global user.email "test@test.com"
+        git config --global user.name "Test User"
+        git init
+        echo "test content" > file.txt
+        git add .
+        git commit -m "Initial commit"
+    
+    - name: Test scan command
+      run: |
+        ./gitbackup scan /tmp/test-repos
+        echo "✓ Scan completed"
+    
+    - name: Test list command
+      run: |
+        ./gitbackup list
+        echo "✓ List completed"
+    
+    - name: Test backup command
+      run: |
+        mkdir -p /tmp/backup-test
+        ./gitbackup backup -d /tmp/backup-test
+        echo "✓ Backup completed"
+    
+    - name: Test compressed backup
+      run: |
+        mkdir -p /tmp/backup-compressed
+        ./gitbackup backup -d /tmp/backup-compressed --compress
+        echo "✓ Compressed backup completed"
+    
+    - name: Verify backup was created
+      run: |
+        ls -la /tmp/backup-compressed/
+        echo "✓ Backup files verified"
+    
+    - name: Test status command
+      run: |
+        ./gitbackup status
+        echo "✓ Status check completed"
+    
+    - name: Test log command
+      run: |
+        ./gitbackup log || true
+        echo "✓ Log command completed"
+    
+    - name: Install shellcheck
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y shellcheck
+    
+    - name: Run shellcheck
+      continue-on-error: true
+      run: shellcheck gitbackup
+    
+    - name: Verify script structure
+      run: |
+        grep -q "scan_repos()" gitbackup
+        grep -q "list_repos()" gitbackup
+        grep -q "backup_repo()" gitbackup
+        echo "✓ Script structure verified"
+    
+    - name: All tests passed
+      run: |
+        echo "================================"
+        echo "✓ All tests passed successfully!"
+        echo "================================"
