@@ -5,7 +5,7 @@ set -e
 
 INSTALL_DIR="/usr/local/bin"
 SCRIPT_NAME="gitbackup"
-REPO_URL="https://raw.githubusercontent.com/YOUR_USERNAME/gitbackup/main/gitbackup"
+REPO_URL="https://raw.githubusercontent.com/strabo231/gitbackup/main/gitbackup"
 
 echo "💾 GitBackup Installer"
 echo "====================="
