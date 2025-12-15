@@ -1,3 +1,5 @@
+[![Test GitBackup](https://github.com/strabo231/gitbackup/actions/workflows/test.yml/badge.svg)](https://github.com/strabo231/gitbackup/actions/workflows/test.yml)
+
 # GitBackup - Automated Git Repository Backup Manager
 
 Never lose your code again! GitBackup automatically discovers and backs up all your git repositories with one command.
