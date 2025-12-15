@@ -3,7 +3,7 @@
 # GitBackup - Automated Git Repository Backup Manager
 # Version: 1.0.0
 
-set -e
+# Don't use set -e as git commands may return non-zero exit codes normally
 
 VERSION="1.0.0"
 SCRIPT_NAME="gitbackup"
@@ -208,7 +208,11 @@ list_repos() {
             continue
         fi
         
-        cd "$repo"
+        # Try to cd to repo, skip if it fails
+        if ! cd "$repo" 2>/dev/null; then
+            echo -e "${RED}[$count]${NC} ${RED}[ACCESS DENIED]${NC} $repo"
+            continue
+        fi
         
         # Get repo name
         local repo_name=$(basename "$repo")
